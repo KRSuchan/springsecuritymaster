@@ -25,8 +25,10 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/login").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
+//                .securityContext(securityContext -> securityContext.requireExplicitSave(false))
                 .authenticationManager(authenticationManager)
                 .addFilterBefore(customAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class);
         ;
