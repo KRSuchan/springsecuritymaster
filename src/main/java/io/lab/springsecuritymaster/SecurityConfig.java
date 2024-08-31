@@ -18,8 +18,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/invalidSessionUrl", "/expiredUrl").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
+                .sessionManagement(session -> session
+                                .invalidSessionUrl("/invalidSessionUrl")
+                                .maximumSessions(1)
+//                                .maxSessionsPreventsLogin(true)
+                                .expiredUrl("/expiredUrl")
+                )
         ;
         return http.build();
     }
