@@ -1,0 +1,17 @@
+### GET request with a header
+GET http://localhost:8080
+Accept: application/json
+
+### POST request with a header
+POST http://localhost:8080/csrf
+Content-Type: application/json
+
+### POST request with a header
+POST http://localhost:8080/csrf
+Content-Type: application/x-www-form-urlencoded
+
+_csrf = aWD2CekcINKcQ4cIVQCQ1Tkgp4WbuaG3jXpwRHVXkT1Xso-vXFnEONArGbexJrJtNy2k7ABBiuT-iZeatR9Dc0FhoVwygeuc
+
+### POST request with a header
+POST http://localhost:8080/ignoreCsrf
+Content-Type: application/json
