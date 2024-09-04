@@ -15,7 +15,23 @@ public class IndexController {
 
     @GetMapping("/")
     public Authentication index(Authentication authentication) {
-        return authentication;
+        throw new RuntimeException("error");
+//        return authentication;
+    }
+
+    @GetMapping("/denied")
+    public String denied() {
+        return "denied";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "loginPage";
+    }
+
+    @GetMapping("/denied")
+    public String denied() {
+        return "denied";
     }
 
     @PostMapping("/csrf")
