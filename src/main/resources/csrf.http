@@ -10,8 +10,8 @@ Content-Type: application/json
 POST http://localhost:8080/csrf
 Content-Type: application/x-www-form-urlencoded
 
-_csrf = aWD2CekcINKcQ4cIVQCQ1Tkgp4WbuaG3jXpwRHVXkT1Xso-vXFnEONArGbexJrJtNy2k7ABBiuT-iZeatR9Dc0FhoVwygeuc
+_csrf = wjj4hjLZgXh0aJJTaqhkY6o-CnAYYbVKkcj063F3IVIYlgMH9QnP4gW8sRpZDKcxD4VQB5sJJxIqVYZn9_nH0hNGFTZ99TQx
 
 ### POST request with a header
-POST http://localhost:8080/ignoreCsrf
+GET http://localhost:8080/csrfToken
 Content-Type: application/json

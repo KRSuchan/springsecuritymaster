@@ -1,10 +1,12 @@
 package io.lab.springsecuritymaster;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,11 +19,6 @@ public class IndexController {
     public Authentication index(Authentication authentication) {
         throw new RuntimeException("error");
 //        return authentication;
-    }
-
-    @GetMapping("/denied")
-    public String denied() {
-        return "denied";
     }
 
     @GetMapping("/login")
@@ -71,5 +68,23 @@ public class IndexController {
     @GetMapping("/logoutSuccess")
     public String logoutSuccess() {
         return "logoutSuccess";
+    }
+
+    @GetMapping("/csrfToken")
+    public String csrfToken(HttpServletRequest request) {
+        CsrfToken csrfToken1 = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+        CsrfToken csrfToken2 = (CsrfToken) request.getAttribute("_csrf");
+        String token = csrfToken1.getToken();
+        return token;
+    }
+
+    @PostMapping("/formCsrf")
+    public CsrfToken formCsrf(CsrfToken csrfToken) {
+        return csrfToken;
+    }
+
+    @PostMapping("/cookieCsrf")
+    public CsrfToken cookieCsrf(CsrfToken csrfToken) {
+        return csrfToken;
     }
 }
