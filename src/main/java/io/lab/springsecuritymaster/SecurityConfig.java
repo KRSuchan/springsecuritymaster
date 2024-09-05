@@ -10,17 +10,27 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        CookieCsrfTokenRepository cookieTokenRepository = new CookieCsrfTokenRepository();
+        XorCsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new XorCsrfTokenRequestAttributeHandler();
+        csrfTokenRequestAttributeHandler.setCsrfRequestAttributeName(null);
+
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/csrf").permitAll()
+                        .requestMatchers("/csrf", "/csrfToken").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
+                .csrf(csrf -> csrf
+                        .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
+                )
         ;
         return http.build();
     }
