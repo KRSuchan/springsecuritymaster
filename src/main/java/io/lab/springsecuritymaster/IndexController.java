@@ -21,11 +21,6 @@ public class IndexController {
 //        return authentication;
     }
 
-    @GetMapping("/denied")
-    public String denied() {
-        return "denied";
-    }
-
     @GetMapping("/login")
     public String login() {
         return "loginPage";
@@ -81,5 +76,15 @@ public class IndexController {
         CsrfToken csrfToken2 = (CsrfToken) request.getAttribute("_csrf");
         String token = csrfToken1.getToken();
         return token;
+    }
+
+    @PostMapping("/formCsrf")
+    public CsrfToken formCsrf(CsrfToken csrfToken) {
+        return csrfToken;
+    }
+
+    @PostMapping("/cookieCsrf")
+    public CsrfToken cookieCsrf(CsrfToken csrfToken) {
+        return csrfToken;
     }
 }
