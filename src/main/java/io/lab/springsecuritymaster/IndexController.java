@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -39,21 +41,30 @@ public class IndexController {
         return "csrf가 적용됨";
     }
 
-    @GetMapping("/loginPage")
-    public String loginPage() {
-        return "loginPage";
+    @GetMapping("/user")
+    public String user() {
+        return "user";
     }
 
-    @GetMapping("/home")
-    public String home() {
-        return "home";
+    @GetMapping("/user/{name}")
+    public String userName(@PathVariable(value = "name") String name) {
+        return name;
     }
 
-    @GetMapping("/anonymous")
-    public String anonymous() {
-        return "anonymous";
+    @GetMapping("/admin/db")
+    public String admin() {
+        return "admin";
     }
 
+    @GetMapping("/api/photos")
+    public String photos() {
+        return "photos";
+    }
+
+    @GetMapping("/oauth/login")
+    public String oauth() {
+        return "oauthLogin";
+    }
     @GetMapping("/custom")
     public String custom() {
         return "custom";

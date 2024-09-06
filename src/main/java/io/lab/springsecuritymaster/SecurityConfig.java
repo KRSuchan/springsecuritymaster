@@ -3,6 +3,7 @@ package io.lab.springsecuritymaster;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,11 +18,10 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-    @Bean현
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new CustomRequestMatcher("/admin")).hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
                 .csrf(csrf -> csrf
@@ -29,6 +29,16 @@ public class SecurityConfig {
                         .csrfTokenRequestHandler(csrfTokenRequestHandler)
                 )
                 .addFilterBefore(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+        ;
+        return http.build();
+    }
+    @Bean
+    @Order(1)
+    public SecurityFilterChain securityFilterChain2(HttpSecurity http) throws Exception {
+        http
+                .securityMatchers(matchers -> matchers.requestMatchers("/api/**", "/oauth/**"))
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll())
         ;
         return http.build();
     }
