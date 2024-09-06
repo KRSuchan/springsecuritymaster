@@ -1,5 +1,6 @@
 package io.lab.springsecuritymaster;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -16,14 +17,11 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        SpaCsrfTokenRequestHandler csrfTokenRequestHandler = new SpaCsrfTokenRequestHandler();
-
+    @Bean현
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/csrf", "/csrfToken", "/form", "/formCsrf", "/cookie", "/cookieCsrf").permitAll()
+                        .requestMatchers(new CustomRequestMatcher("/admin")).hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
                 .csrf(csrf -> csrf
@@ -35,6 +33,32 @@ public class SecurityConfig {
         return http.build();
     }
 //    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
+//
+//        DefaultHttpSecurityExpressionHandler expressionHandler = new DefaultHttpSecurityExpressionHandler();
+//        expressionHandler.setApplicationContext(context);
+//
+//        WebExpressionAuthorizationManager authorizationManager
+//                = new WebExpressionAuthorizationManager("@customWebSecurity.check(authentication, request)");
+//        authorizationManager.setExpressionHandler(expressionHandler);
+//
+//        http
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/custom/**").access(authorizationManager)
+//                        .anyRequest().authenticated())
+//                .formLogin(Customizer.withDefaults())
+//        ;
+////        http
+////                .authorizeHttpRequests(auth -> auth
+////                        .requestMatchers("/user/{name}")
+////                        .access(new WebExpressionAuthorizationManager("#name == authentication.name"))
+////
+////                        .requestMatchers("/admin/db")
+////                        .access(new WebExpressionAuthorizationManager("hasAuthority('ROLE_DB') or hasAuthority('ROLE_ADMIN')"))
+////
+////                        .anyRequest().authenticated())
+////                .formLogin(Customizer.withDefaults())
+////        ;
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 //        http
 //                .authorizeHttpRequests(auth -> auth
@@ -49,6 +73,8 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
-        return new InMemoryUserDetailsManager(user);
+        UserDetails db = User.withUsername("db").password("{noop}1111").roles("DB").build();
+        UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN", "SECURE").build();
+        return new InMemoryUserDetailsManager(user, db, admin);
     }
 }
