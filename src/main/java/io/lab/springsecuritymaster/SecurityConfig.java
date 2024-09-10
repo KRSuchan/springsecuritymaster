@@ -21,26 +21,18 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 @Configuration
 public class SecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/images/**").permitAll()
+                        .anyRequest().authenticated())
+
                 .formLogin(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
-    @Bean
-    @Order(1)
-    public SecurityFilterChain securityFilterChain2(HttpSecurity http) throws Exception {
-        http
-                .securityMatchers(matchers -> matchers.requestMatchers("/api/**", "/oauth/**"))
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll())
-        ;
-        return http.build();
-    }
-
 
     @Bean
     public UserDetailsService userDetailsService() {
