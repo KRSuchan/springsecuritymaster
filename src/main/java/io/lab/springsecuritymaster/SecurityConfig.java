@@ -23,6 +23,7 @@ public class SecurityConfig {
                         .requestMatchers("/user").hasRole("USER")
                         .requestMatchers("/db").access(new WebExpressionAuthorizationManager("hasRole('DB')"))
                         .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/secure").access(new CustomAuthorizationManager())
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
         ;
@@ -38,7 +39,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
         UserDetails db = User.withUsername("db").password("{noop}1111").roles("DB").build();
-        UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN").build();
+        UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN", "SECURE").build();
         return new InMemoryUserDetailsManager(user, db, admin);
     }
 }
