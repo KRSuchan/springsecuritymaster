@@ -37,5 +37,21 @@ public class IndexController {
     public String admin() {
         return "admin";
     }
-  
+
+
+    @GetMapping("/user")
+    public String user() {
+        return "user";
+    }
+
+    @GetMapping("/db")
+    public String db() {
+        return "DB";
+    }
+
+    @GetMapping("/admin")
+    public String admin() {
+        return "admin";
+    }
+
 }
