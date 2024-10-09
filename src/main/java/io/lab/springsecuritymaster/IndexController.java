@@ -50,4 +50,20 @@ public class IndexController {
     public String logoutSuccess() {
         return "logoutSuccess";
     }
+
+    @GetMapping("/user")
+    public String user() {
+        return "user";
+    }
+
+    @GetMapping("/db")
+    public String db() {
+        return "DB";
+    }
+
+    @GetMapping("/admin")
+    public String admin() {
+        return "admin";
+    }
+
 }
