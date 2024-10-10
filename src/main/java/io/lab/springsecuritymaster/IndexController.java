@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class IndexController {
 
+    private final DataService dataService;
+
     @GetMapping("/")
     public Authentication index(Authentication authentication) {
         return authentication;
@@ -51,11 +53,6 @@ public class IndexController {
         return "logoutSuccess";
     }
 
-    @GetMapping("/user")
-    public String user() {
-        return "user";
-    }
-
     @GetMapping("/db")
     public String db() {
         return "DB";
@@ -69,6 +66,21 @@ public class IndexController {
     @GetMapping("/secure")
     public String secure() {
         return "secure";
+    }
+
+    @GetMapping("/user")
+    public String user() {
+        return dataService.getUser();
+    }
+
+    @GetMapping("/owner")
+    public Account owner(String name) {
+        return dataService.getOwner(name);
+    }
+
+    @GetMapping("/display")
+    public String display() {
+        return dataService.display();
     }
 
 }
