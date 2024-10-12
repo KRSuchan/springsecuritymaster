@@ -1,38 +1,23 @@
 package io.lab.springsecuritymaster;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
-import java.io.IOException;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
-
-    private final ApplicationContext applicationContext;
-    private final AuthenticationProvider authenticationProvider;
-    private final ApplicationEventPublisher eventPulisher;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -50,32 +35,9 @@ public class SecurityConfig {
                         .requestMatchers("/db").hasAuthority("ROLE_DB")
                         .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
                         .anyRequest().permitAll())
-                .formLogin(form -> form
-                        .successHandler(new AuthenticationSuccessHandler() {
-                                            @Override
-                                            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                                                eventPulisher.publishEvent(new CustomAuthenticationSuccessEvent(authentication));
-                                                response.sendRedirect("/");
-                                            }
-                                        }
-                        ))
-                .csrf(AbstractHttpConfigurer::disable)
-//                .authenticationProvider(authenticationProvider);
-                .authenticationProvider(customAuthenticationProvider2());
+                .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
-    }
-
-    @Bean
-    public AuthenticationProvider customAuthenticationProvider2() {
-        return new CustomAuthenticationProvider2(authenticationEventPublisher(null));
-    }
-
-    @Bean
-    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        DefaultAuthenticationEventPublisher authenticationEventPublisher
-                = new DefaultAuthenticationEventPublisher(applicationEventPublisher);
-        return authenticationEventPublisher;
     }
 
     @Bean
