@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,22 +31,12 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated())
+                        .requestMatchers("/user").hasAuthority("ROLE_USER")
+                        .requestMatchers("/db").hasAuthority("ROLE_DB")
+                        .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().permitAll())
                 .formLogin(Customizer.withDefaults())
-        ;
-
-        return http.build();
-    }
-
-    @Bean
-    @Order(1)
-    public SecurityFilterChain securityFilterChain2(HttpSecurity http) throws Exception {
-
-        http
-                .securityMatchers((matchers) -> matchers.requestMatchers("/api/**"))
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll()
-                )
+                .with(MyCustomDsl.customDsl(), dsl -> dsl.setFlag(true))
         ;
 
         return http.build();
