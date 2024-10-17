@@ -19,13 +19,13 @@ import java.io.IOException;
 public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
 
-        AccountDto accountDto = (AccountDto) authentication.getCredentials();
+        AccountDto accountDto = (AccountDto) authentication.getPrincipal();
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         accountDto.setPassword(null);
-        objectMapper.writeValue(response.getWriter(), accountDto);
+        mapper.writeValue(response.getWriter(), accountDto);
 
         clearAuthenticationAttributes(request);
     }
