@@ -1,6 +1,6 @@
 package io.lab.springsecuritymaster.security.configs;
 
-import io.lab.springsecuritymaster.filters.RestAuthenticationFilter;
+import io.lab.springsecuritymaster.security.dsl.RestApiDsl;
 import io.lab.springsecuritymaster.security.entrypoint.RestAuthenticationEntryPoint;
 import io.lab.springsecuritymaster.security.handler.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,9 +14,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 @EnableWebSecurity
@@ -51,6 +49,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(new FormAccessDeniedHandler("/denied")))
+
         ;
 
         return http.build();
@@ -72,24 +71,19 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
+//                .csrf(AbstractHttpConfigurer::disable)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                         .accessDeniedHandler(new RestAccessDeniedHandler())
                 )
+                .with(new RestApiDsl<>(), restDsl -> restDsl
+                        .restSuccessHandler(restSuccessHandler)
+                        .restFailureHandler(restFailureHandler)
+                        .loginProcessingUrl("/api/login")
+                )
         ;
 
         return http.build();
     }
-
-    private RestAuthenticationFilter restAuthenticationFilter(HttpSecurity http, AuthenticationManager authenticationManager) {
-        RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter(http);
-        restAuthenticationFilter.setAuthenticationManager(authenticationManager);
-        restAuthenticationFilter.setAuthenticationSuccessHandler(restSuccessHandler);
-        restAuthenticationFilter.setAuthenticationFailureHandler(restFailureHandler);
-        return restAuthenticationFilter;
-    }
-
 }
