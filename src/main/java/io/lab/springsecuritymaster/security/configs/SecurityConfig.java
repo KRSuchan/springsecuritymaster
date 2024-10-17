@@ -1,7 +1,7 @@
 package io.lab.springsecuritymaster.security.configs;
 
 import io.lab.springsecuritymaster.filters.RestAuthenticationFilter;
-import io.lab.springsecuritymaster.security.handler.FormAccessDeniedHandler;
+import io.lab.springsecuritymaster.security.handler.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
@@ -25,9 +23,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
+    private final AuthenticationProvider restAuthenticationProvider;
     private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
-    private final AuthenticationSuccessHandler successHandler;
-    private final AuthenticationFailureHandler failureHandler;
+    private final FormAuthenticationSuccessHandler successHandler;
+    private final FormAuthenticationFailureHandler failureHandler;
+    private final RestAuthenticationSuccessHandler restSuccessHandler;
+    private final RestAuthenticationFailureHandler restFailureHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,6 +59,7 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain restSecurityFilterChain(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder managerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        managerBuilder.authenticationProvider(restAuthenticationProvider);
         AuthenticationManager authenticationManager = managerBuilder.build();
         http
                 .securityMatcher("/api/**")
@@ -76,6 +78,8 @@ public class SecurityConfig {
     private RestAuthenticationFilter restAuthenticationFilter(AuthenticationManager authenticationManager) {
         RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter();
         restAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        restAuthenticationFilter.setAuthenticationSuccessHandler(restSuccessHandler);
+        restAuthenticationFilter.setAuthenticationFailureHandler(restFailureHandler);
         return restAuthenticationFilter;
     }
 
