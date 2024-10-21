@@ -14,7 +14,7 @@ public class MapBasedUrlRoleMapper implements UrlRoleMapper {
         urlRoleMappings.put("/js/**", "permitAll");
         urlRoleMappings.put("/images/**", "permitAll");
         urlRoleMappings.put("/*/icon-*", "permitAll");
-        urlRoleMappings.put("/favicon.*", "permitAll"); // "favicon.*"만 유일하게 반대로 적용되는중...
+//        urlRoleMappings.put("/favicon.*", "permitAll"); // "favicon.*"만 유일하게 반대로 적용되는중...
         urlRoleMappings.put("/signup", "permitAll");
         urlRoleMappings.put("/login", "permitAll");
         urlRoleMappings.put("/logout", "permitAll");
