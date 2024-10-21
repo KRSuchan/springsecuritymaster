@@ -26,7 +26,7 @@ public class UserManagementController {
         List<Account> users = userManagementService.getUsers();
         model.addAttribute("users", users);
 
-        return "admin/users";
+        return "/admin/users";
     }
 
     @PostMapping(value = "/admin/users")
@@ -46,7 +46,7 @@ public class UserManagementController {
         model.addAttribute("user", accountDto);
         model.addAttribute("roleList", roleList);
 
-        return "admin/userdetails";
+        return "/admin/userdetails";
     }
 
     @GetMapping(value = "/admin/users/delete/{id}")
@@ -54,6 +54,6 @@ public class UserManagementController {
 
         userManagementService.deleteUser(id);
 
-        return "redirect:admin/users";
+        return "redirect:/admin/users";
     }
 }
